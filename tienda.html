@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="populares.css">
+    <link rel="stylesheet" href="fotos.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <h1 class="titulo">Tienda Virtual</h1>
+
+        <div class="populares__contenido">
+            <img class="populares__card___imagen" src="./assets/img/pubg.jpg"></img>
+            <img class="populares__card___imagen" src="./assets/img/mario-kart.jpg"></img>
+            <img class="populares__card___imagen" src="./assets/img/fortnite.jpg"></img>
+            <img class="populares__card___imagen" src="./assets/img/cs-go.jpg"></img>
+
+            <div class="populares__card">
+                <table class="btnProductos">
+                    <tbody id="productos-lista">
+                        <!-- Aquí se generará la lista de productos -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="detalles-producto-container">
+            <h3>Detalles del Producto:</h3>
+            <div id="detalles-producto"></div>
+        </div>
+
+        <div id="carrito-container">
+            <h3>Productos en el carrito:</h3>
+            <table id="carrito-lista">
+                <!-- Aquí se generará la lista de productos en el carrito -->
+            </table>
+        </div>
+
+        <div id="mostrar-carrito-container" class="contenedor-centrado">
+            <button id="mostrar-carrito-btn">Mostrar carrito</button>
+        </div>
+
+        <div class="contenedor-centrado">
+            <a class="volver" href="index.html">Menu principal</a>
+        </div>
+
+    </div>
+
+    <script>
+        const URL = "https://andres1977.pythonanywhere.com/";
+        const productosLista = document.getElementById('productos-lista');
+        const carritoLista = document.getElementById('carrito-lista');
+        const mostrarCarritoBtn = document.getElementById('mostrar-carrito-btn');
+        const carritoContainer = document.getElementById('carrito-container');
+        const mostrarCarritoContainer = document.getElementById('mostrar-carrito-container');
+
+        // Cargar la lista de productos
+        function obtenerProductos() {
+            fetch(`${URL}productos`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(producto => {
+                        const row = document.createElement('span');
+                        const button = document.createElement('button'); // Create a button element
+                        button.textContent = 'Mostrar Detalles'; // Set button text
+
+                        // Add click event listener to the button
+                        button.addEventListener('click', () => {
+                            obtenerProducto(producto.codigo);
+                        });
+
+
+                        row.appendChild(button); // Append the button to the row
+                        productosLista.appendChild(row);
+                    });
+                })
+                .catch(error => {
+                    console.error(`${URL}productos`, error);
+                    alert('Error al obtener los productos.');
+                });
+        }
+
+        function obtenerProducto(codigo) {
+            fetch(`${URL}productos/${codigo}`)
+                .then(response => response.json())
+                .then(data => {
+                    const producto = data;
+                    if (producto) {
+                        const detallesProducto = document.getElementById('detalles-producto');
+                        detallesProducto.innerHTML = `
+                <p><strong>Código:</strong> ${producto.codigo}</p>
+                <p><strong>Descripción:</strong> ${producto.descripcion}</p>
+                <p><strong>Cantidad:</strong> ${producto.cantidad}</p>
+                <p><strong>Precio:</strong> ${producto.precio}</p>
+                <button onclick="agregarAlCarrito(${producto.codigo})">&nbsp;&nbsp;<b>Agregar Carrito</b>&nbsp;&nbsp;</button>
+                <button onclick="restarDelCarrito(${producto.codigo})">&nbsp;&nbsp;<b>Quitar del Carrito</b>&nbsp;&nbsp;</button>
+                 `;
+                    } else {
+                        console.log(`Producto con código ${codigo} no encontrado.`);
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error al obtener el producto con código ${codigo}:`, error);
+                    alert(`Error al obtener el producto con código ${codigo}.`);
+                });
+        }
+
+        // Agregar un producto al carrito
+        function agregarAlCarrito(codigo) {
+            fetch(`${URL}carrito`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    codigo: codigo,
+                    cantidad: 1,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('Error al agregar el producto al carrito:', error);
+                    alert('Error al agregar el producto al carrito.');
+                });
+        }
+
+        // Restar un producto del carrito
+        function restarDelCarrito(codigo) {
+            fetch(`${URL}carrito`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    codigo: codigo,
+                    cantidad: 1,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+                .catch(error => {
+                    console.error('Error al restar el producto del carrito:', error);
+                    alert('Error al restar el producto del carrito.');
+                });
+        }
+
+        // Obtener y mostrar el carrito
+        function obtenerCarrito() {
+            fetch(`${URL}carrito`)
+                .then(response => response.json())
+                .then(data => {
+                    carritoLista.innerHTML = '';
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                  <td<th>Código : </th>${item.codigo} -- </td>
+                  <td<th>Descripción : </th>${item.descripcion} -- </td>
+                  <td<th>Cantidad : </th>${item.cantidad} -- </td>
+                  <td<th>Precio : </th>${item.precio}</td><br>
+                `;
+                        carritoLista.appendChild(row);
+                    });
+                    carritoContainer.style.display = 'block';
+                    mostrarCarritoContainer.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('Error al obtener el carrito:', error);
+                    alert('Error al obtener el carrito.');
+                });
+        }
+
+        // Mostrar el carrito al hacer clic en el botón
+        mostrarCarritoBtn.addEventListener('click', obtenerCarrito);
+
+        // Cargar la lista de productos al cargar la página
+        window.addEventListener('load', obtenerProductos);
+    </script>
+
+</body>
+
+</html>

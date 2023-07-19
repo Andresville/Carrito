@@ -1,0 +1,80 @@
+body{
+    font-family:'Courier New', Courier, monospace;
+    font-size: larger;
+    background-color: #f9f9f9;
+}
+
+.btnProductos{
+    background-color: #f9f9f9;
+}
+
+.titulo{
+    text-align: center;
+}
+
+.populares__contenido{
+    width: 100%;
+    display: flex;
+}
+
+.populares__card___imagen{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin-left: 20px;
+    width: 300px;
+    height: 150px;
+}
+
+#productos-lista{
+    display: flex;
+    flex-direction: row;
+    width: 1300px;
+    margin-top: 10px;
+    justify-content: space-around;
+    align-items: center;
+}
+
+button{
+    width: 250px;
+    height: 50px;
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-size:medium;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#detalles-producto-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: -100px;
+    
+}
+
+#carrito-container >h3{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#carrito-lista{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.contenedor-centrado{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.volver{
+    margin-top: 10px;
+}
